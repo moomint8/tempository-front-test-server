@@ -53,4 +53,9 @@ public class UserService {
     public void logout() {
         sessionService.logout();
     }
+
+    public User findUserByEmail(String email) throws Exception {
+
+        return userRepository.selectUserByEmail(email);
+    }
 }

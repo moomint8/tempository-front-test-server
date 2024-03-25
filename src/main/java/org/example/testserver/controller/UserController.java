@@ -2,10 +2,7 @@ package org.example.testserver.controller;
 
 import org.example.testserver.aggregate.entity.User;
 import org.example.testserver.aggregate.vo.ResponseMessageVO;
-import org.example.testserver.aggregate.vo.user.RequestExistVO;
-import org.example.testserver.aggregate.vo.user.RequestSignInVO;
-import org.example.testserver.aggregate.vo.user.RequestSignupVO;
-import org.example.testserver.aggregate.vo.user.ResponseWhoAmIVO;
+import org.example.testserver.aggregate.vo.user.*;
 import org.example.testserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -86,5 +83,30 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessageVO("로그아웃 성공"));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessageVO("로그인 이후 사용해주세요."));
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<ResponseUserInfoVO> findUserByEmail(@PathVariable("email") String email) {
+        ResponseUserInfoVO response = new ResponseUserInfoVO();
+
+        if (userService.whoAmI() == null) {
+            response.setMessage("로그인 이후 사용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        try {
+            User user = userService.findUserByEmail(email);
+            response.setId(user.getId());
+            response.setName(user.getName());
+            response.setNickname(user.getNickname());
+            response.setEmail(user.getEmail());
+            response.setFollower(user.getFollower());
+            response.setFollowing(user.getFollowing());
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            response.setMessage("존재하지 않는 회원입니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 }

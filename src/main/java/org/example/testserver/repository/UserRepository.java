@@ -77,4 +77,13 @@ public class UserRepository {
         }
         throw new Exception("회원 정보가 일치하지 않습니다.");
     }
+
+    public User selectUserByEmail(String email) throws Exception {
+        for (User user : userList) {
+            if (user.getEmail().equals(email)) {
+                return user;
+            }
+        }
+        throw new Exception();
+    }
 }
