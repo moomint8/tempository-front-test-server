@@ -3,6 +3,7 @@ package org.example.testserver.controller;
 import org.example.testserver.aggregate.entity.User;
 import org.example.testserver.aggregate.vo.ResponseMessageVO;
 import org.example.testserver.aggregate.vo.user.*;
+import org.example.testserver.service.SessionService;
 import org.example.testserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,10 +15,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final SessionService sessionService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, SessionService sessionService) {
         this.userService = userService;
+        this.sessionService = sessionService;
     }
 
     @PostMapping("/exist")
@@ -89,7 +92,7 @@ public class UserController {
     public ResponseEntity<ResponseUserInfoVO> findUserByEmail(@PathVariable("email") String email) {
         ResponseUserInfoVO response = new ResponseUserInfoVO();
 
-        if (userService.whoAmI() == null) {
+        if (sessionService.whoAmI() == null) {
             response.setMessage("로그인 이후 사용해주세요.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
