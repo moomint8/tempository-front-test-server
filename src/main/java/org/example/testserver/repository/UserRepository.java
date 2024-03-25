@@ -87,6 +87,15 @@ public class UserRepository {
         throw new Exception();
     }
 
+    public User selectUserById(int id) throws Exception {
+        for (User user : userList) {
+            if (user.getId() == id) {
+                return user;
+            }
+        }
+        throw new Exception();
+    }
+
     public User updateUser(User updatedUser) {
         for (User user : userList) {
             if (user.getId() == updatedUser.getId()) {

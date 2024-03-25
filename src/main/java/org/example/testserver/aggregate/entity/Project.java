@@ -14,7 +14,7 @@ public class Project {
     private String name;
     private Status status;
     private String content;
-    private List<Integer> memberId;
+    private List<Integer> memberIds;
 
     public enum Status {
         COMPLETED,

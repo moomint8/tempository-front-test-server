@@ -113,6 +113,31 @@ public class UserController {
         }
     }
 
+    @GetMapping("id/{id}")
+    public ResponseEntity<ResponseUserInfoVO> findUserById(@PathVariable("id") String id) {
+        ResponseUserInfoVO response = new ResponseUserInfoVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 사용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        try {
+            User user = userService.findUserById(Integer.parseInt(id));
+            response.setId(user.getId());
+            response.setName(user.getName());
+            response.setNickname(user.getNickname());
+            response.setEmail(user.getEmail());
+            response.setFollower(user.getFollower());
+            response.setFollowing(user.getFollowing());
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            response.setMessage("존재하지 않는 회원입니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
     @PutMapping("/update-info")
     public ResponseEntity<ResponseUserInfoVO> updateInfo(@RequestBody RequestUpdateInfoVO request) {
         ResponseUserInfoVO response = new ResponseUserInfoVO();

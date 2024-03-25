@@ -1,6 +1,7 @@
 package org.example.testserver.aggregate.vo.project;
 
 import lombok.*;
+import org.example.testserver.aggregate.entity.User;
 
 import java.util.List;
 
@@ -15,5 +16,5 @@ public class ResponseProjectVO {
     private String name;
     private String status;
     private String content;
-    private List<Integer> memberId;
+    private List<User> members;
 }

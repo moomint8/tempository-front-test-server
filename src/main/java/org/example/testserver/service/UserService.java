@@ -59,6 +59,10 @@ public class UserService {
         return userRepository.selectUserByEmail(email);
     }
 
+    public User findUserById(int id) throws Exception {
+        return userRepository.selectUserById(id);
+    }
+
     public User updateUserInfo(String nickname, String name) throws Exception {
         User user = sessionService.whoAmI();
 

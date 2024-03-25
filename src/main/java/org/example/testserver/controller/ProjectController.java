@@ -1,16 +1,19 @@
 package org.example.testserver.controller;
 
 import org.example.testserver.aggregate.entity.Project;
+import org.example.testserver.aggregate.entity.User;
 import org.example.testserver.aggregate.vo.project.RequestProjectVO;
 import org.example.testserver.aggregate.vo.project.ResponseProjectListVO;
 import org.example.testserver.aggregate.vo.project.ResponseProjectVO;
 import org.example.testserver.service.ProjectService;
 import org.example.testserver.service.SessionService;
+import org.example.testserver.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/project")
@@ -18,14 +21,16 @@ public class ProjectController {
 
     private final ProjectService projectService;
     private final SessionService sessionService;
+    private final UserService userService;
 
-    public ProjectController(ProjectService projectService, SessionService sessionService) {
+    public ProjectController(ProjectService projectService, SessionService sessionService, UserService userService) {
         this.projectService = projectService;
         this.sessionService = sessionService;
+        this.userService = userService;
     }
 
     @GetMapping("/myproject")
-    public ResponseEntity<ResponseProjectListVO> myProject() {
+    public ResponseEntity<ResponseProjectListVO> myProject() throws Exception {
         ResponseProjectListVO response = new ResponseProjectListVO();
 
         if (sessionService.whoAmI() == null) {
@@ -39,8 +44,8 @@ public class ProjectController {
         for (Project project : projects) {
 
             responseProjectVOs.add(new ResponseProjectVO(
-                    null, project.getId(), project.getName(), project.getStatus().toString(), project.getContent(), project.getMemberId()
-            ));
+                    null, project.getId(), project.getName(), project.getStatus().toString(), project.getContent(), changeUserIdToUser(project.getMemberIds()))
+               );
             response.setProjects(responseProjectVOs);
         }
 
@@ -48,7 +53,7 @@ public class ProjectController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ResponseProjectVO> addProject(@RequestBody RequestProjectVO request) {
+    public ResponseEntity<ResponseProjectVO> addProject(@RequestBody RequestProjectVO request) throws Exception {
         ResponseProjectVO response = new ResponseProjectVO();
 
         if (sessionService.whoAmI() == null) {
@@ -63,8 +68,17 @@ public class ProjectController {
         response.setName(project.getName());
         response.setStatus(project.getStatus().toString());
         response.setContent(project.getContent());
-        response.setMemberId(project.getMemberId());
+        response.setMembers(List.of(userService.findUserById(project.getMemberIds().get(0))));
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    private ArrayList<User> changeUserIdToUser(List<Integer> userIds) throws Exception {
+        ArrayList<User> users = new ArrayList<>();
+        for (int id : userIds) {
+            users.add(userService.findUserById(id));
+        }
+
+        return users;
     }
 }
