@@ -58,4 +58,30 @@ public class UserService {
 
         return userRepository.selectUserByEmail(email);
     }
+
+    public User updateUserInfo(String nickname, String name) throws Exception {
+        User user = sessionService.whoAmI();
+
+        if (nickname != null) {
+            if (!userRepository.existNickname(nickname)) {
+                throw new Exception("중복된 닉네임입니다.");
+            }
+            user.setNickname(nickname);
+        }
+        if (name != null) {
+            user.setName(name);
+        }
+
+        return userRepository.updateUser(user);
+    }
+
+    public User updatePassword(String oldPassword, String newPassword) throws Exception {
+        User user = sessionService.whoAmI();
+        if (user.getPassword().equals(oldPassword)) {
+            user.setPassword(newPassword);
+
+            return userRepository.updateUser(user);
+        }
+        throw new Exception();
+    }
 }

@@ -112,4 +112,57 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
+
+    @PutMapping("/update-info")
+    public ResponseEntity<ResponseUserInfoVO> updateInfo(@RequestBody RequestUpdateInfoVO request) {
+        ResponseUserInfoVO response = new ResponseUserInfoVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 사용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        try {
+            User user = userService.updateUserInfo(request.getNickname(), request.getName());
+            response.setMessage("업데이트 성공");
+            response.setId(user.getId());
+            response.setName(user.getName());
+            response.setNickname(user.getNickname());
+            response.setEmail(user.getEmail());
+            response.setFollower(user.getFollower());
+            response.setFollowing(user.getFollowing());
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            response.setMessage("업데이트 실패");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+    }
+
+    @PutMapping("/update-password")
+    public ResponseEntity<ResponseUserInfoVO> updatePassword(@RequestBody RequestUpdateInfoVO request) {
+        ResponseUserInfoVO response = new ResponseUserInfoVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 사용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        try {
+            User user = userService.updatePassword(request.getOldPassword(), request.getNewPassword());
+            response.setMessage("업데이트 성공");
+            response.setId(user.getId());
+            response.setName(user.getName());
+            response.setNickname(user.getNickname());
+            response.setEmail(user.getEmail());
+            response.setFollower(user.getFollower());
+            response.setFollowing(user.getFollowing());
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            response.setMessage("업데이트 실패");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
 }

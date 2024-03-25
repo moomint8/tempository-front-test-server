@@ -86,4 +86,17 @@ public class UserRepository {
         }
         throw new Exception();
     }
+
+    public User updateUser(User updatedUser) {
+        for (User user : userList) {
+            if (user.getId() == updatedUser.getId()) {
+                user.setName(updatedUser.getName());
+                user.setNickname(updatedUser.getNickname());
+                user.setPassword(updatedUser.getPassword());
+            }
+            return user;
+        }
+
+        return null;
+    }
 }
