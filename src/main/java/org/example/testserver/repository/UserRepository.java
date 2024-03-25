@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 @Repository
 public class UserRepository {
-    private ArrayList<User> userList = new ArrayList<User>();
+    private final ArrayList<User> userList = new ArrayList<User>();
 
     public UserRepository() {
         userList.add(new User(1, "홍길동", "RedLoad", "RedLoad@gmail.com", "1234", 0, 0));
