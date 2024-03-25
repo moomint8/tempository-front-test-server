@@ -39,4 +39,11 @@ public class ProjectRepository {
 
         return projects;
     }
+
+    public Project insertProject(String name, String content, int id) {
+        Project project = new Project(projectList.size() + 1, name, Project.Status.IN_PROGRESS, content, List.of(id));
+        projectList.add(project);
+
+        return project;
+    }
 }

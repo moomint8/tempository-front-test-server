@@ -1,15 +1,14 @@
 package org.example.testserver.controller;
 
 import org.example.testserver.aggregate.entity.Project;
+import org.example.testserver.aggregate.vo.project.RequestProjectVO;
 import org.example.testserver.aggregate.vo.project.ResponseProjectListVO;
 import org.example.testserver.aggregate.vo.project.ResponseProjectVO;
 import org.example.testserver.service.ProjectService;
 import org.example.testserver.service.SessionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
@@ -44,6 +43,27 @@ public class ProjectController {
             ));
             response.setProjects(responseProjectVOs);
         }
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<ResponseProjectVO> addProject(@RequestBody RequestProjectVO request) {
+        ResponseProjectVO response = new ResponseProjectVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        Project project = projectService.addProject(request.getName(), request.getContent());
+
+        response.setMessage("프로젝트 추가 성공");
+        response.setId(project.getId());
+        response.setName(project.getName());
+        response.setStatus(project.getStatus().toString());
+        response.setContent(project.getContent());
+        response.setMemberId(project.getMemberId());
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

@@ -21,4 +21,8 @@ public class ProjectService {
     public ArrayList<Project> findMyProjects() {
         return projectRepository.selectMyProjects(sessionService.whoAmI().getId());
     }
+
+    public Project addProject(String name, String content) {
+        return projectRepository.insertProject(name, content, sessionService.whoAmI().getId());
+    }
 }
