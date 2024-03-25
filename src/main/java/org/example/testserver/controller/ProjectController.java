@@ -1,6 +1,7 @@
 package org.example.testserver.controller;
 
 import org.example.testserver.aggregate.entity.Project;
+import org.example.testserver.aggregate.vo.project.ResponseProjectListVO;
 import org.example.testserver.aggregate.vo.project.ResponseProjectVO;
 import org.example.testserver.service.ProjectService;
 import org.example.testserver.service.SessionService;
@@ -25,19 +26,23 @@ public class ProjectController {
     }
 
     @GetMapping("/myproject")
-    public ResponseEntity<ArrayList<ResponseProjectVO>> myProject() {
-        ArrayList<ResponseProjectVO> response = new ArrayList<>();
+    public ResponseEntity<ResponseProjectListVO> myProject() {
+        ResponseProjectListVO response = new ResponseProjectListVO();
 
         if (sessionService.whoAmI() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
         ArrayList<Project> projects = projectService.findMyProjects();
+        ArrayList<ResponseProjectVO> responseProjectVOs = new ArrayList<>();
 
         for (Project project : projects) {
-            response.add(new ResponseProjectVO(
-                    project.getId(), project.getName(), project.getStatus().toString(), project.getContent(), project.getMemberId()
+
+            responseProjectVOs.add(new ResponseProjectVO(
+                    null, project.getId(), project.getName(), project.getStatus().toString(), project.getContent(), project.getMemberId()
             ));
+            response.setProjects(responseProjectVOs);
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

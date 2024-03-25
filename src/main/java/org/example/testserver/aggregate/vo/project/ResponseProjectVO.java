@@ -1,7 +1,6 @@
 package org.example.testserver.aggregate.vo.project;
 
 import lombok.*;
-import org.example.testserver.aggregate.entity.Project;
 
 import java.util.List;
 
@@ -11,6 +10,7 @@ import java.util.List;
 @Setter
 @ToString
 public class ResponseProjectVO {
+    private String message;
     private int id;
     private String name;
     private String status;
