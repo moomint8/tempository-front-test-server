@@ -30,4 +30,8 @@ public class ProjectService {
     public Project modifyProject(int projectId, String name, String status, String content) throws Exception {
         return projectRepository.updateProject(projectId, name, status, content);
     }
+
+    public boolean removeProject(int projectId) {
+        return projectRepository.deleteProject(projectId);
+    }
 }

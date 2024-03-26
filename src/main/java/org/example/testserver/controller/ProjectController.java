@@ -2,6 +2,7 @@ package org.example.testserver.controller;
 
 import org.example.testserver.aggregate.entity.Project;
 import org.example.testserver.aggregate.entity.User;
+import org.example.testserver.aggregate.vo.ResponseMessageVO;
 import org.example.testserver.aggregate.vo.project.RequestProjectVO;
 import org.example.testserver.aggregate.vo.project.ResponseProjectListVO;
 import org.example.testserver.aggregate.vo.project.ResponseProjectVO;
@@ -94,6 +95,24 @@ public class ProjectController {
             response.setMessage("수정 실패");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
+    }
+
+    @DeleteMapping("/remove/{projectId}")
+    public ResponseEntity<ResponseMessageVO> deleteProject(@PathVariable("projectId") String projectId) {
+        ResponseMessageVO response = new ResponseMessageVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        if (projectService.removeProject(Integer.parseInt(projectId))) {
+            response.setMessage("삭제 성공");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+        response.setMessage("삭제 실패");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     private ArrayList<User> changeUserIdToUser(List<Integer> userIds) throws Exception {

@@ -74,4 +74,23 @@ public class ProjectRepository {
 
         throw new Exception();
     }
+
+    public boolean deleteProject(int projectId) {
+
+        boolean flag = false;
+        Project target = null;
+
+        for (Project project : projectList) {
+            if (flag) {
+                project.setId(project.getId() - 1);
+            } else if (project.getId() == projectId) {
+                flag = true;
+                target = project;
+            }
+        }
+
+        projectList.remove(target);
+
+        return flag;
+    }
 }
