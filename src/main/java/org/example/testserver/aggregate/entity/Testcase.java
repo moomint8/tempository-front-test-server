@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class ProjectTestcase {
+public class Testcase {
     private int no;
     private String separate;
     private String content;

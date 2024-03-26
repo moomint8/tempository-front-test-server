@@ -1,6 +1,6 @@
 package org.example.testserver.controller;
 
-import org.example.testserver.aggregate.entity.ProjectTestcase;
+import org.example.testserver.aggregate.entity.Testcase;
 import org.example.testserver.aggregate.vo.ResponseMessageVO;
 import org.example.testserver.aggregate.vo.projectTestcase.RequestProjectTestcaseVO;
 import org.example.testserver.aggregate.vo.projectTestcase.ResponseProjectTestcaseListVO;
@@ -34,10 +34,10 @@ public class ProjectTestcaseController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        ArrayList<ProjectTestcase> testcases = projectTestcaseService.findProjectTestcaseByProjectId(Integer.parseInt(projectId));
+        ArrayList<Testcase> testcases = projectTestcaseService.findProjectTestcaseByProjectId(Integer.parseInt(projectId));
         ArrayList<ResponseProjectTestcaseVO> testcaseVOArrayList = new ArrayList<>();
 
-        for (ProjectTestcase testcase : testcases) {
+        for (Testcase testcase : testcases) {
             testcaseVOArrayList.add(new ResponseProjectTestcaseVO(null, testcase.getNo(), testcase.getSeparate(), testcase.getContent(), testcase.getExpectedValue(), testcase.getResult(), testcase.getNote(), testcase.getProjectId()));
         }
 
@@ -56,7 +56,7 @@ public class ProjectTestcaseController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        ProjectTestcase testcase = projectTestcaseService.addProjectTestcase(Integer.parseInt(projectId), request.getSeparate(), request.getContent(), request.getExpectedValue(), request.getNote());
+        Testcase testcase = projectTestcaseService.addProjectTestcase(Integer.parseInt(projectId), request.getSeparate(), request.getContent(), request.getExpectedValue(), request.getNote());
         response.setMessage("추가 성공");
         response.setNo(testcase.getNo());
         response.setSeparate(testcase.getSeparate());
@@ -79,7 +79,7 @@ public class ProjectTestcaseController {
         }
 
         try {
-            ProjectTestcase testcase = projectTestcaseService.modifyProjectTestcase(Integer.parseInt(projectId), request.getNo(), request.getSeparate(), request.getContent(), request.getExpectedValue(), request.getResult(), request.getNote());
+            Testcase testcase = projectTestcaseService.modifyProjectTestcase(Integer.parseInt(projectId), request.getNo(), request.getSeparate(), request.getContent(), request.getExpectedValue(), request.getResult(), request.getNote());
 
             response.setMessage("변경 성공");
             response.setNo(testcase.getNo());
