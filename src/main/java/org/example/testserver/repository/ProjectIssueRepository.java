@@ -8,7 +8,8 @@ import java.util.ArrayList;
 @Repository
 public class ProjectIssueRepository {
     private final ArrayList<Issue> issueList = new ArrayList<>();
-// 진행예정 진행중 진행완료 수정요청
+
+    // 진행예정 진행중 진행완료 수정요청
     public ProjectIssueRepository() {
         issueList.add(new Issue(1, 1, "회원가입 오류", "진행완료",
                 "회원가입 시스템에서 오류가 발생하여 사용자가 회원가입을 할 수 없습니다.",
@@ -37,5 +38,39 @@ public class ProjectIssueRepository {
         }
 
         return issues;
+    }
+
+    public Issue update(int projectId, int no, String name, String status, String content, int managerId, int writerId) {
+
+        boolean flag = false;
+        Issue target = null;
+
+        for (Issue issue : issueList) {
+            if (issue.getProjectId() == projectId) {
+                if (flag) {
+                    issue.setNo(issue.getNo() - 1);
+                } else if (issue.getNo() == no) {
+                    flag = true;
+                    if (name != null) {
+                        issue.setName(name);
+                    }
+                    if (status != null) {
+                        issue.setStatus(status);
+                    }
+                    if (content != null) {
+                        issue.setContent(content);
+                    }
+                    if (managerId != 0) {
+                        issue.setManagerId(managerId);
+                    }
+                    if (writerId != 0) {
+                        issue.setWriterId(writerId);
+                    }
+                    target = issue;
+                }
+            }
+        }
+
+        return target;
     }
 }

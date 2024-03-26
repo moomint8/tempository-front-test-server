@@ -20,4 +20,8 @@ public class ProjectIssueService {
     public ArrayList<Issue> findIssueByProjectId(int projectId) {
         return projectIssueRepository.selectIssueByProjectId(projectId);
     }
+
+    public Issue modifyIssue(int projectId, int no, String name, String status, String content, int managerId, int writerId) {
+        return projectIssueRepository.update(projectId, no, name, status, content, managerId, writerId);
+    }
 }
