@@ -5,7 +5,7 @@ import org.example.testserver.aggregate.vo.ResponseMessageVO;
 import org.example.testserver.aggregate.vo.projectTestcase.RequestProjectTestcaseVO;
 import org.example.testserver.aggregate.vo.projectTestcase.ResponseProjectTestcaseListVO;
 import org.example.testserver.aggregate.vo.projectTestcase.ResponseProjectTestcaseVO;
-import org.example.testserver.service.ProjectTestcaseService;
+import org.example.testserver.service.TestcaseService;
 import org.example.testserver.service.SessionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +15,13 @@ import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/testcase")
-public class ProjectTestcaseController {
+public class TestcaseController {
 
-    private final ProjectTestcaseService projectTestcaseService;
+    private final TestcaseService testcaseService;
     private final SessionService sessionService;
 
-    public ProjectTestcaseController(ProjectTestcaseService projectTestcaseService, SessionService sessionService) {
-        this.projectTestcaseService = projectTestcaseService;
+    public TestcaseController(TestcaseService testcaseService, SessionService sessionService) {
+        this.testcaseService = testcaseService;
         this.sessionService = sessionService;
     }
 
@@ -34,7 +34,7 @@ public class ProjectTestcaseController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        ArrayList<Testcase> testcases = projectTestcaseService.findProjectTestcaseByProjectId(Integer.parseInt(projectId));
+        ArrayList<Testcase> testcases = testcaseService.findProjectTestcaseByProjectId(Integer.parseInt(projectId));
         ArrayList<ResponseProjectTestcaseVO> testcaseVOArrayList = new ArrayList<>();
 
         for (Testcase testcase : testcases) {
@@ -56,7 +56,7 @@ public class ProjectTestcaseController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        Testcase testcase = projectTestcaseService.addProjectTestcase(Integer.parseInt(projectId), request.getSeparate(), request.getContent(), request.getExpectedValue(), request.getNote());
+        Testcase testcase = testcaseService.addProjectTestcase(Integer.parseInt(projectId), request.getSeparate(), request.getContent(), request.getExpectedValue(), request.getNote());
         response.setMessage("추가 성공");
         response.setNo(testcase.getNo());
         response.setSeparate(testcase.getSeparate());
@@ -79,7 +79,7 @@ public class ProjectTestcaseController {
         }
 
         try {
-            Testcase testcase = projectTestcaseService.modifyProjectTestcase(Integer.parseInt(projectId), request.getNo(), request.getSeparate(), request.getContent(), request.getExpectedValue(), request.getResult(), request.getNote());
+            Testcase testcase = testcaseService.modifyProjectTestcase(Integer.parseInt(projectId), request.getNo(), request.getSeparate(), request.getContent(), request.getExpectedValue(), request.getResult(), request.getNote());
 
             response.setMessage("변경 성공");
             response.setNo(testcase.getNo());
@@ -107,7 +107,7 @@ public class ProjectTestcaseController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        if (projectTestcaseService.removeTestcase(Integer.parseInt(projectId), request.getNo())) {
+        if (testcaseService.removeTestcase(Integer.parseInt(projectId), request.getNo())) {
             response.setMessage("삭제 성공!");
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }

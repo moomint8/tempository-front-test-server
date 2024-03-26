@@ -6,10 +6,10 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 
 @Repository
-public class ProjectTestcaseRepository {
+public class TestcaseRepository {
     private final ArrayList<Testcase> testcaseList = new ArrayList<>();
 
-    public ProjectTestcaseRepository() {
+    public TestcaseRepository() {
         testcaseList.add(
                 new Testcase(1, "회원가입",
                         "유효한 이메일과 비밀번호를 입력하고 회원가입 버튼을 클릭했을 때, 회원가입이 성공적으로 이루어져야 함",

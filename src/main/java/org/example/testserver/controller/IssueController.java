@@ -5,7 +5,7 @@ import org.example.testserver.aggregate.vo.ResponseMessageVO;
 import org.example.testserver.aggregate.vo.issue.RequestIssueVO;
 import org.example.testserver.aggregate.vo.issue.ResponseIssueListVO;
 import org.example.testserver.aggregate.vo.issue.ResponseIssueVO;
-import org.example.testserver.service.ProjectIssueService;
+import org.example.testserver.service.IssueService;
 import org.example.testserver.service.SessionService;
 import org.example.testserver.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -16,14 +16,14 @@ import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/issue")
-public class ProjectIssueController {
+public class IssueController {
 
-    private final ProjectIssueService projectIssueService;
+    private final IssueService issueService;
     private final UserService userService;
     private final SessionService sessionService;
 
-    public ProjectIssueController(ProjectIssueService projectIssueService, UserService userService, SessionService sessionService) {
-        this.projectIssueService = projectIssueService;
+    public IssueController(IssueService issueService, UserService userService, SessionService sessionService) {
+        this.issueService = issueService;
         this.userService = userService;
         this.sessionService = sessionService;
     }
@@ -38,7 +38,7 @@ public class ProjectIssueController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        ArrayList<Issue> issues = projectIssueService.findIssueByProjectId(Integer.parseInt(projectId));
+        ArrayList<Issue> issues = issueService.findIssueByProjectId(Integer.parseInt(projectId));
         ArrayList<ResponseIssueVO> issueVOS = new ArrayList<>();
 
         for (Issue issue : issues) {
@@ -63,7 +63,7 @@ public class ProjectIssueController {
 
         int myId = sessionService.whoAmI().getId();
 
-        response = changeIssueToResponseIssueVO(projectIssueService.addIssue(Integer.parseInt(projectId),
+        response = changeIssueToResponseIssueVO(issueService.addIssue(Integer.parseInt(projectId),
                 request.getName(), request.getStatus(), request.getContent(), myId, myId));
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -80,7 +80,7 @@ public class ProjectIssueController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        response = changeIssueToResponseIssueVO(projectIssueService.modifyIssue(Integer.parseInt(projectId), request.getNo(), request.getName(),
+        response = changeIssueToResponseIssueVO(issueService.modifyIssue(Integer.parseInt(projectId), request.getNo(), request.getName(),
                 request.getStatus(), request.getContent(), request.getManagerId(), request.getWriterId()));
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -96,7 +96,7 @@ public class ProjectIssueController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        if (projectIssueService.removeIssue(Integer.parseInt(projectId), request.getNo())) {
+        if (issueService.removeIssue(Integer.parseInt(projectId), request.getNo())) {
             response.setMessage("삭제 성공");
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }

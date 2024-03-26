@@ -1,35 +1,35 @@
 package org.example.testserver.service;
 
 import org.example.testserver.aggregate.entity.Issue;
-import org.example.testserver.repository.ProjectIssueRepository;
+import org.example.testserver.repository.IssueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
 @Service
-public class ProjectIssueService {
+public class IssueService {
 
-    private final ProjectIssueRepository projectIssueRepository;
+    private final IssueRepository issueRepository;
 
     @Autowired
-    public ProjectIssueService(ProjectIssueRepository projectIssueRepository) {
-        this.projectIssueRepository = projectIssueRepository;
+    public IssueService(IssueRepository issueRepository) {
+        this.issueRepository = issueRepository;
     }
 
     public ArrayList<Issue> findIssueByProjectId(int projectId) {
-        return projectIssueRepository.selectIssueByProjectId(projectId);
+        return issueRepository.selectIssueByProjectId(projectId);
     }
 
     public Issue addIssue(int projectId, String name, String status, String content, int managerId, int writerId) {
-        return projectIssueRepository.insertIssue(projectId, name, status, content, managerId, writerId);
+        return issueRepository.insertIssue(projectId, name, status, content, managerId, writerId);
     }
 
     public Issue modifyIssue(int projectId, int no, String name, String status, String content, int managerId, int writerId) {
-        return projectIssueRepository.updateIssue(projectId, no, name, status, content, managerId, writerId);
+        return issueRepository.updateIssue(projectId, no, name, status, content, managerId, writerId);
     }
 
     public boolean removeIssue(int projectId, int no) {
-        return projectIssueRepository.deleteIssue(projectId, no);
+        return issueRepository.deleteIssue(projectId, no);
     }
 }

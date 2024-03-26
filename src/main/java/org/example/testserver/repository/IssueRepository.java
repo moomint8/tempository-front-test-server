@@ -6,10 +6,10 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 
 @Repository
-public class ProjectIssueRepository {
+public class IssueRepository {
     private final ArrayList<Issue> issueList = new ArrayList<>();
 
-    public ProjectIssueRepository() {
+    public IssueRepository() {
         issueList.add(new Issue(1, 1, "회원가입 오류", "진행완료",
                 "회원가입 시스템에서 오류가 발생하여 사용자가 회원가입을 할 수 없습니다.",
                 1, 1, 1));

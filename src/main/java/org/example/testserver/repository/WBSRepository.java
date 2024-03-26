@@ -8,10 +8,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 @Repository
-public class ProjectWBSRepository {
+public class WBSRepository {
     private final ArrayList<WBS> wbsList = new ArrayList<>();
 
-    public ProjectWBSRepository() {
+    public WBSRepository() {
         wbsList.add(new WBS(1, 1, "요구사항분석", "진행완료",
                 changeDate("2023-01-01"), changeDate("2023-01-02"), 1, 1));
         wbsList.add(new WBS(2, 2, "요구사항 명세서 작성", "진행완료",
@@ -55,6 +55,33 @@ public class ProjectWBSRepository {
         wbsList.add(newWBS);
 
         return newWBS;
+    }
+
+    public WBS updateWBS(int projectId, int no, String content, String status, String startDate, String endDate,
+                         int managerId) throws Exception {
+        for (WBS wbs : wbsList) {
+            if (wbs.getProjectId() == projectId && wbs.getNo() == no) {
+                if (content != null) {
+                    wbs.setContent(content);
+                }
+                if (status != null) {
+                    wbs.setStatus(status);
+                }
+                if (startDate != null) {
+                    wbs.setStartDate(changeDate(startDate));
+                }
+                if (endDate != null) {
+                    wbs.setEndDate(changeDate(endDate));
+                }
+                if (managerId != 0) {
+                    wbs.setManagerId(managerId);
+                }
+
+                return wbs;
+            }
+        }
+
+        throw new Exception();
     }
 
     private LocalDate changeDate(String date) {

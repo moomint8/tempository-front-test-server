@@ -4,8 +4,7 @@ import org.example.testserver.aggregate.entity.WBS;
 import org.example.testserver.aggregate.vo.WBS.RequestProjectWBSVO;
 import org.example.testserver.aggregate.vo.WBS.ResponseProjectWBSListVO;
 import org.example.testserver.aggregate.vo.WBS.ResponseProjectWBSVO;
-import org.example.testserver.aggregate.vo.issue.RequestIssueVO;
-import org.example.testserver.service.ProjectWBSService;
+import org.example.testserver.service.WBSService;
 import org.example.testserver.service.SessionService;
 import org.example.testserver.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -16,14 +15,14 @@ import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/wbs")
-public class ProjectWBSController {
+public class WBSController {
 
-    private final ProjectWBSService projectWBSService;
+    private final WBSService WBSService;
     private final SessionService sessionService;
     private final UserService userService;
 
-    public ProjectWBSController(ProjectWBSService projectWBSService, SessionService sessionService, UserService userService) {
-        this.projectWBSService = projectWBSService;
+    public WBSController(WBSService WBSService, SessionService sessionService, UserService userService) {
+        this.WBSService = WBSService;
         this.sessionService = sessionService;
         this.userService = userService;
     }
@@ -37,7 +36,7 @@ public class ProjectWBSController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        ArrayList<WBS> wbsList = projectWBSService.findWBSListByProjectId(Integer.parseInt(projectId));
+        ArrayList<WBS> wbsList = WBSService.findWBSListByProjectId(Integer.parseInt(projectId));
         ArrayList<ResponseProjectWBSVO> wbsVOS = new ArrayList<>();
 
         for (WBS wbs : wbsList) {
@@ -64,10 +63,36 @@ public class ProjectWBSController {
             request.setManagerId(sessionService.whoAmI().getId());
         }
 
-        response = changeWBSToResponseWBSVO(projectWBSService.addWBS(Integer.parseInt(projectId), request.getContent(),
+        response = changeWBSToResponseWBSVO(WBSService.addWBS(Integer.parseInt(projectId), request.getContent(),
                 request.getStatus(), request.getStartDate(), request.getEndDate(), request.getManagerId()));
 
         response.setMessage("추가 성공");
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PutMapping("/modify/{projectId}")
+    public ResponseEntity<ResponseProjectWBSVO> modifyWBS(@PathVariable("projectId") String projectId,
+                                                          @RequestBody RequestProjectWBSVO request) {
+        ResponseProjectWBSVO response = new ResponseProjectWBSVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        try {
+            WBS wbs = WBSService.modifyWBS(Integer.parseInt(projectId), request.getNo(), request.getContent(),
+                    request.getStatus(), request.getStartDate(), request.getEndDate(), request.getManagerId());
+
+            response = changeWBSToResponseWBSVO(wbs);
+
+        } catch (Exception e) {
+            response.setMessage("수정 실패");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        response.setMessage("수정 성공");
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
