@@ -1,6 +1,7 @@
 package org.example.testserver.controller;
 
 import org.example.testserver.aggregate.entity.ProjectTestcase;
+import org.example.testserver.aggregate.vo.ResponseMessageVO;
 import org.example.testserver.aggregate.vo.projectTestcase.RequestProjectTestcaseVO;
 import org.example.testserver.aggregate.vo.projectTestcase.ResponseProjectTestcaseListVO;
 import org.example.testserver.aggregate.vo.projectTestcase.ResponseProjectTestcaseVO;
@@ -74,7 +75,7 @@ public class ProjectTestcaseController {
 
     @PutMapping("/modify/{projectId}")
     public ResponseEntity<ResponseProjectTestcaseVO> modifyProjectTestcase(@PathVariable("projectId") String projectId,
-                                                                        @RequestBody RequestProjectTestcaseVO request) {
+                                                                           @RequestBody RequestProjectTestcaseVO request) {
         ResponseProjectTestcaseVO response = new ResponseProjectTestcaseVO();
 
         if (sessionService.whoAmI() == null) {
@@ -100,5 +101,24 @@ public class ProjectTestcaseController {
             response.setMessage("잘못된 요청입니다.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
+    }
+
+    @DeleteMapping("/remove/{projectId}")
+    public ResponseEntity<ResponseMessageVO> removeProjectTestcase(@PathVariable("projectId") String projectId,
+                                                                           @RequestBody RequestProjectTestcaseVO request) {
+        ResponseMessageVO response = new ResponseMessageVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        if (projectTestcaseService.removeTestcase(Integer.parseInt(projectId), request.getNo())) {
+            response.setMessage("삭제 성공!");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+        response.setMessage("삭제 실패");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }

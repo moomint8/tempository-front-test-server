@@ -28,4 +28,9 @@ public class ProjectTestcaseService {
                                                  String expectedValue, String result, String note) throws Exception {
         return projectTestcaseRepository.updateTestcase(projectId, no, separate, content, expectedValue, result, note);
     }
+
+    public boolean removeTestcase(int projectId, int no) {
+
+        return projectTestcaseRepository.deleteTestcase(projectId, no);
+    }
 }

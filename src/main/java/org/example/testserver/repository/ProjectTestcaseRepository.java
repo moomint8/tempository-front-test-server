@@ -93,4 +93,29 @@ public class ProjectTestcaseRepository {
 
         throw new Exception("존재하지 않는 테스트케이스입니다.");
     }
+
+    public boolean deleteTestcase(int projectId, int no) {
+
+        boolean flag = false;
+        ProjectTestcase target = null;
+
+        for (ProjectTestcase testcase : projectTestcaseList) {
+
+            if (testcase.getProjectId() == projectId) {
+                if (flag) {
+                    testcase.setNo(testcase.getNo() - 1);
+                } else {
+                    if (testcase.getNo() == no) {
+                        flag = true;
+                        target = testcase;
+                    }
+                }
+
+            }
+        }
+
+        projectTestcaseList.remove(target);
+
+        return flag;
+    }
 }
