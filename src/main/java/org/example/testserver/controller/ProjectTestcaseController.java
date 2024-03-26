@@ -98,7 +98,6 @@ public class ProjectTestcaseController {
 
         } catch (Exception e) {
             response.setMessage("잘못된 요청입니다.");
-            System.out.println("e.getMessage() = " + e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
