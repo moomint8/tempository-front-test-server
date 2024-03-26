@@ -30,4 +30,8 @@ public class WBSService {
 
         return WBSRepository.updateWBS(projectId, no, content, status, startDate, endDate, managerId);
     }
+
+    public boolean removeWBS(int projectId, int no) {
+        return WBSRepository.deleteWBS(projectId, no);
+    }
 }

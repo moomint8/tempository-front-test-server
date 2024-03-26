@@ -1,6 +1,7 @@
 package org.example.testserver.controller;
 
 import org.example.testserver.aggregate.entity.WBS;
+import org.example.testserver.aggregate.vo.ResponseMessageVO;
 import org.example.testserver.aggregate.vo.WBS.RequestProjectWBSVO;
 import org.example.testserver.aggregate.vo.WBS.ResponseProjectWBSListVO;
 import org.example.testserver.aggregate.vo.WBS.ResponseProjectWBSVO;
@@ -95,6 +96,25 @@ public class WBSController {
         response.setMessage("수정 성공");
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @DeleteMapping("/remove/{projectId}")
+    public ResponseEntity<ResponseMessageVO> removeWBS(@PathVariable("projectId") String projectId,
+                                                       @RequestBody RequestProjectWBSVO request) {
+        ResponseMessageVO response = new ResponseMessageVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        if (WBSService.removeWBS(Integer.parseInt(projectId), request.getNo())) {
+            response.setMessage("삭제 성공");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+        response.setMessage("삭제 실패");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     private ResponseProjectWBSVO changeWBSToResponseWBSVO(WBS wbs) throws Exception {

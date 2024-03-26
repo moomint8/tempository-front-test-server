@@ -84,6 +84,30 @@ public class WBSRepository {
         throw new Exception();
     }
 
+    public boolean deleteWBS(int projectId, int no) {
+
+        boolean flag = false;
+        WBS target = null;
+
+        for (WBS wbs : wbsList) {
+            if (flag) {
+                wbs.setId(wbs.getId() - 1);
+            }
+            if (wbs.getProjectId() == projectId) {
+                if (flag) {
+                    wbs.setNo(wbs.getNo() - 1);
+                } else if (wbs.getNo() == no) {
+                    flag = true;
+                    target = wbs;
+                }
+            }
+        }
+
+        wbsList.remove(target);
+
+        return flag;
+    }
+
     private LocalDate changeDate(String date) {
         return LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
     }
