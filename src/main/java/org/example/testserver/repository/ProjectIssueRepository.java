@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public class ProjectIssueRepository {
     private final ArrayList<Issue> issueList = new ArrayList<>();
 
-    // 진행예정 진행중 진행완료 수정요청
     public ProjectIssueRepository() {
         issueList.add(new Issue(1, 1, "회원가입 오류", "진행완료",
                 "회원가입 시스템에서 오류가 발생하여 사용자가 회원가입을 할 수 없습니다.",
