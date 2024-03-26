@@ -28,4 +28,8 @@ public class ProjectIssueService {
     public Issue modifyIssue(int projectId, int no, String name, String status, String content, int managerId, int writerId) {
         return projectIssueRepository.updateIssue(projectId, no, name, status, content, managerId, writerId);
     }
+
+    public boolean removeIssue(int projectId, int no) {
+        return projectIssueRepository.deleteIssue(projectId, no);
+    }
 }

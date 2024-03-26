@@ -1,6 +1,7 @@
 package org.example.testserver.controller;
 
 import org.example.testserver.aggregate.entity.Issue;
+import org.example.testserver.aggregate.vo.ResponseMessageVO;
 import org.example.testserver.aggregate.vo.issue.RequestIssueVO;
 import org.example.testserver.aggregate.vo.issue.ResponseIssueListVO;
 import org.example.testserver.aggregate.vo.issue.ResponseIssueVO;
@@ -83,6 +84,25 @@ public class ProjectIssueController {
                 request.getStatus(), request.getContent(), request.getManagerId(), request.getWriterId()));
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @DeleteMapping("/remove/{projectId}")
+    public ResponseEntity<ResponseMessageVO> deleteIssue(@PathVariable("projectId") String projectId,
+                                                         @RequestBody RequestIssueVO request) {
+        ResponseMessageVO response = new ResponseMessageVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        if (projectIssueService.removeIssue(Integer.parseInt(projectId), request.getNo())) {
+            response.setMessage("삭제 성공");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+        response.setMessage("삭제 실패");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     private ResponseIssueVO changeIssueToResponseIssueVO(Issue issue) throws Exception {

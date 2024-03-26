@@ -89,4 +89,28 @@ public class ProjectIssueRepository {
 
         return issue;
     }
+
+    public boolean deleteIssue(int projectId, int no) {
+
+        boolean flag = false;
+        Issue target = null;
+
+        for (Issue issue : issueList) {
+            if (flag) {
+                issue.setId(issue.getId() - 1);
+            }
+            if (issue.getProjectId() == projectId) {
+                if (flag) {
+                    issue.setNo(issue.getNo() - 1);
+                } else if (issue.getNo() == no) {
+                    flag = true;
+                    target = issue;
+                }
+            }
+        }
+
+        issueList.remove(target);
+
+        return flag;
+    }
 }
