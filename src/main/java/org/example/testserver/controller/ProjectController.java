@@ -73,6 +73,29 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PutMapping("/modify/{projectId}")
+    public ResponseEntity<ResponseProjectVO> modifyProject(@PathVariable("projectId") String projectId,
+                                                           @RequestBody RequestProjectVO request) {
+        ResponseProjectVO response = new ResponseProjectVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        try {
+            Project project = projectService.modifyProject(Integer.parseInt(projectId), request.getName(), request.getStatus(), request.getContent());
+            response = projectVOMapper(project);
+            response.setMessage("프로젝트 수정 성공");
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+
+        } catch (Exception e) {
+            response.setMessage("수정 실패");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
     private ArrayList<User> changeUserIdToUser(List<Integer> userIds) throws Exception {
         ArrayList<User> users = new ArrayList<>();
         for (int id : userIds) {
@@ -80,5 +103,17 @@ public class ProjectController {
         }
 
         return users;
+    }
+
+    private ResponseProjectVO projectVOMapper(Project project) throws Exception {
+        ResponseProjectVO response = new ResponseProjectVO();
+
+        response.setId(project.getId());
+        response.setName(project.getName());
+        response.setStatus(project.getStatus().toString());
+        response.setContent(project.getContent());
+        response.setMembers(changeUserIdToUser(project.getMemberIds()));
+
+        return response;
     }
 }

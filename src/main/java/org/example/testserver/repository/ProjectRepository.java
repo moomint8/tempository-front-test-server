@@ -47,4 +47,31 @@ public class ProjectRepository {
 
         return project;
     }
+
+    public Project updateProject(int projectId, String name, String status, String content) throws Exception {
+
+        for (Project project : projectList) {
+            if (project.getId() == projectId) {
+                if (name != null) {
+                    project.setName(name);
+                }
+                if (status != null) {
+                    if (status.equals("IN_PROGRESS")) {
+                        project.setStatus(Project.Status.IN_PROGRESS);
+                    } else if (status.equals("COMPLETED")) {
+                        project.setStatus(Project.Status.COMPLETED);
+                    } else {
+                        throw new Exception();
+                    }
+                }
+                if (content != null) {
+                    project.setContent(content);
+                }
+
+                return project;
+            }
+        }
+
+        throw new Exception();
+    }
 }

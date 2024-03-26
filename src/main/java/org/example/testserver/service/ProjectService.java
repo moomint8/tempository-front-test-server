@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ProjectService {
@@ -24,5 +25,9 @@ public class ProjectService {
 
     public Project addProject(String name, String content) {
         return projectRepository.insertProject(name, content, sessionService.whoAmI().getId());
+    }
+
+    public Project modifyProject(int projectId, String name, String status, String content) throws Exception {
+        return projectRepository.updateProject(projectId, name, status, content);
     }
 }

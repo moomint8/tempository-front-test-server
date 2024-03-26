@@ -38,9 +38,7 @@ public class ProjectTestcaseController {
         ArrayList<ResponseProjectTestcaseVO> testcaseVOArrayList = new ArrayList<>();
 
         for (ProjectTestcase testcase : testcases) {
-            testcaseVOArrayList.add(
-                    new ResponseProjectTestcaseVO(null, testcase.getNo(), testcase.getSeparate(), testcase.getContent(),
-                            testcase.getExpectedValue(), testcase.getResult(), testcase.getNote(), testcase.getProjectId()));
+            testcaseVOArrayList.add(new ResponseProjectTestcaseVO(null, testcase.getNo(), testcase.getSeparate(), testcase.getContent(), testcase.getExpectedValue(), testcase.getResult(), testcase.getNote(), testcase.getProjectId()));
         }
 
         response.setMessage("조회 성공");
@@ -50,8 +48,7 @@ public class ProjectTestcaseController {
     }
 
     @PostMapping("/add/{projectId}")
-    public ResponseEntity<ResponseProjectTestcaseVO> addProjectTestcase(@PathVariable("projectId") String projectId,
-                                                                        @RequestBody RequestProjectTestcaseVO request) {
+    public ResponseEntity<ResponseProjectTestcaseVO> addProjectTestcase(@PathVariable("projectId") String projectId, @RequestBody RequestProjectTestcaseVO request) {
         ResponseProjectTestcaseVO response = new ResponseProjectTestcaseVO();
 
         if (sessionService.whoAmI() == null) {
@@ -59,8 +56,7 @@ public class ProjectTestcaseController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        ProjectTestcase testcase = projectTestcaseService.addProjectTestcase(Integer.parseInt(projectId),
-                request.getSeparate(), request.getContent(), request.getExpectedValue(), request.getNote());
+        ProjectTestcase testcase = projectTestcaseService.addProjectTestcase(Integer.parseInt(projectId), request.getSeparate(), request.getContent(), request.getExpectedValue(), request.getNote());
         response.setMessage("추가 성공");
         response.setNo(testcase.getNo());
         response.setSeparate(testcase.getSeparate());
@@ -74,8 +70,7 @@ public class ProjectTestcaseController {
     }
 
     @PutMapping("/modify/{projectId}")
-    public ResponseEntity<ResponseProjectTestcaseVO> modifyProjectTestcase(@PathVariable("projectId") String projectId,
-                                                                           @RequestBody RequestProjectTestcaseVO request) {
+    public ResponseEntity<ResponseProjectTestcaseVO> modifyProjectTestcase(@PathVariable("projectId") String projectId, @RequestBody RequestProjectTestcaseVO request) {
         ResponseProjectTestcaseVO response = new ResponseProjectTestcaseVO();
 
         if (sessionService.whoAmI() == null) {
@@ -104,8 +99,7 @@ public class ProjectTestcaseController {
     }
 
     @DeleteMapping("/remove/{projectId}")
-    public ResponseEntity<ResponseMessageVO> removeProjectTestcase(@PathVariable("projectId") String projectId,
-                                                                           @RequestBody RequestProjectTestcaseVO request) {
+    public ResponseEntity<ResponseMessageVO> removeProjectTestcase(@PathVariable("projectId") String projectId, @RequestBody RequestProjectTestcaseVO request) {
         ResponseMessageVO response = new ResponseMessageVO();
 
         if (sessionService.whoAmI() == null) {
