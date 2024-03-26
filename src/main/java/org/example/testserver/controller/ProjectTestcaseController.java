@@ -1,16 +1,14 @@
 package org.example.testserver.controller;
 
 import org.example.testserver.aggregate.entity.ProjectTestcase;
+import org.example.testserver.aggregate.vo.projectTestcase.RequestProjectTestcaseVO;
 import org.example.testserver.aggregate.vo.projectTestcase.ResponseProjectTestcaseListVO;
 import org.example.testserver.aggregate.vo.projectTestcase.ResponseProjectTestcaseVO;
 import org.example.testserver.service.ProjectTestcaseService;
 import org.example.testserver.service.SessionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
@@ -48,5 +46,60 @@ public class ProjectTestcaseController {
         response.setProjectTestcases(testcaseVOArrayList);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/add/{projectId}")
+    public ResponseEntity<ResponseProjectTestcaseVO> addProjectTestcase(@PathVariable("projectId") String projectId,
+                                                                        @RequestBody RequestProjectTestcaseVO request) {
+        ResponseProjectTestcaseVO response = new ResponseProjectTestcaseVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        ProjectTestcase testcase = projectTestcaseService.addProjectTestcase(Integer.parseInt(projectId),
+                request.getSeparate(), request.getContent(), request.getExpectedValue(), request.getNote());
+        response.setMessage("추가 성공");
+        response.setNo(testcase.getNo());
+        response.setSeparate(testcase.getSeparate());
+        response.setContent(testcase.getContent());
+        response.setExpectedValue(testcase.getExpectedValue());
+        response.setResult(testcase.getResult());
+        response.setNote(testcase.getNote());
+        response.setProjectId(testcase.getProjectId());
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PutMapping("/modify/{projectId}")
+    public ResponseEntity<ResponseProjectTestcaseVO> modifyProjectTestcase(@PathVariable("projectId") String projectId,
+                                                                        @RequestBody RequestProjectTestcaseVO request) {
+        ResponseProjectTestcaseVO response = new ResponseProjectTestcaseVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        try {
+            ProjectTestcase testcase = projectTestcaseService.modifyProjectTestcase(Integer.parseInt(projectId), request.getNo(), request.getSeparate(), request.getContent(), request.getExpectedValue(), request.getResult(), request.getNote());
+
+            response.setMessage("변경 성공");
+            response.setNo(testcase.getNo());
+            response.setSeparate(testcase.getSeparate());
+            response.setContent(testcase.getContent());
+            response.setExpectedValue(testcase.getExpectedValue());
+            response.setResult(testcase.getResult());
+            response.setNote(testcase.getNote());
+            response.setProjectId(testcase.getProjectId());
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+
+        } catch (Exception e) {
+            response.setMessage("잘못된 요청입니다.");
+            System.out.println("e.getMessage() = " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 }

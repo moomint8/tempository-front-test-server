@@ -48,4 +48,49 @@ public class ProjectTestcaseRepository {
 
         return testcases;
     }
+
+    public ProjectTestcase insertTestcase(String separate, String content, String expectedValue, String result, String note, int projectId) {
+
+        int no = 1;
+        for (ProjectTestcase testcase : projectTestcaseList) {
+            if (testcase.getProjectId() == projectId) no++;
+        }
+
+        ProjectTestcase testcase = new ProjectTestcase(no, separate, content, expectedValue, result, note, projectId);
+        projectTestcaseList.add(testcase);
+
+        return testcase;
+    }
+
+    public ProjectTestcase updateTestcase(int projectId, int no, String separate, String content, String expectedValue,
+                                          String result, String note) throws Exception {
+
+        for (ProjectTestcase testcase : projectTestcaseList) {
+            if (testcase.getProjectId() == projectId && testcase.getNo() == no) {
+                if (separate != null) {
+                    testcase.setSeparate(separate);
+                }
+                if (content != null) {
+                    testcase.setContent(content);
+                }
+                if (expectedValue != null) {
+                    testcase.setExpectedValue(expectedValue);
+                }
+                if (result != null) {
+                    if (result.equals("진행전") || result.equals("진행중") || result.equals("성공") || result.equals("실패")) {
+                        testcase.setResult(result);
+                    } else {
+                        throw new Exception("잘못된 요청입니다.");
+                    }
+                }
+                if (note != null) {
+                    testcase.setNote(note);
+                }
+
+                return testcase;
+            }
+        }
+
+        throw new Exception("존재하지 않는 테스트케이스입니다.");
+    }
 }

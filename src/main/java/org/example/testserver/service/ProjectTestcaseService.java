@@ -17,4 +17,15 @@ public class ProjectTestcaseService {
     public ArrayList<ProjectTestcase> findProjectTestcaseByProjectId(int projectId) {
         return projectTestcaseRepository.selectProjectTestcaseByProjectId(projectId);
     }
+
+    public ProjectTestcase addProjectTestcase(int projectId, String separate,
+                                              String content, String expectedValue, String note) {
+
+        return projectTestcaseRepository.insertTestcase(separate, content, expectedValue, "진행전", note, projectId);
+    }
+
+    public ProjectTestcase modifyProjectTestcase(int projectId, int no, String separate, String content,
+                                                 String expectedValue, String result, String note) throws Exception {
+        return projectTestcaseRepository.updateTestcase(projectId, no, separate, content, expectedValue, result, note);
+    }
 }
