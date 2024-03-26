@@ -20,4 +20,8 @@ public class ProjectWBSService {
     public ArrayList<WBS> findWBSListByProjectId(int projectId) {
         return projectWBSRepository.selectWBSByProjectId(projectId);
     }
+
+    public WBS addWBS(int projectId, String content, String status, String startDate, String endDate, int managerId) {
+        return projectWBSRepository.insertWBS(projectId, content, status, startDate, endDate, managerId);
+    }
 }

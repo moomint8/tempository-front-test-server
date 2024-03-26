@@ -28,10 +28,6 @@ public class ProjectWBSRepository {
                 changeDate("2023-04-06"), changeDate("2023-04-30"), 1, 1));
     }
 
-    private LocalDate changeDate(String date) {
-        return LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
-    }
-
     public ArrayList<WBS> selectWBSByProjectId(int projectId) {
         ArrayList<WBS> result = new ArrayList<>();
 
@@ -42,5 +38,26 @@ public class ProjectWBSRepository {
         }
 
         return result;
+    }
+
+    public WBS insertWBS(int projectId, String content, String status, String startDate, String endDate, int managerId) {
+
+        int id = wbsList.size() + 1;
+        int no = 1;
+
+        for (WBS wbs : wbsList) {
+            if (wbs.getProjectId() == projectId) {
+                no++;
+            }
+        }
+
+        WBS newWBS = new WBS(id, no, content, status, changeDate(startDate), changeDate(endDate), managerId, projectId);
+        wbsList.add(newWBS);
+
+        return newWBS;
+    }
+
+    private LocalDate changeDate(String date) {
+        return LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
     }
 }
