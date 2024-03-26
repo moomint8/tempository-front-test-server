@@ -40,7 +40,7 @@ public class ProjectIssueRepository {
         return issues;
     }
 
-    public Issue update(int projectId, int no, String name, String status, String content, int managerId, int writerId) {
+    public Issue updateIssue(int projectId, int no, String name, String status, String content, int managerId, int writerId) {
 
         boolean flag = false;
         Issue target = null;
@@ -72,5 +72,21 @@ public class ProjectIssueRepository {
         }
 
         return target;
+    }
+
+    public Issue insertIssue(int projectId, String name, String status, String content, int managerId, int writerId) {
+        int no = 1;
+
+        for (Issue issue : issueList) {
+            if (issue.getProjectId() == projectId) {
+                no++;
+            }
+        }
+
+        Issue issue = new Issue(issueList.size() + 1, no, name, status, content, managerId, writerId, projectId);
+
+        issueList.add(issue);
+
+        return issue;
     }
 }

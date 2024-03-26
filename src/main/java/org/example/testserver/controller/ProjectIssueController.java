@@ -50,6 +50,24 @@ public class ProjectIssueController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PostMapping("/add/{projectId}")
+    public ResponseEntity<ResponseIssueVO> addIssue(@PathVariable("projectId") String projectId,
+                                                    @RequestBody RequestIssueVO request) throws Exception {
+        ResponseIssueVO response = new ResponseIssueVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        int myId = sessionService.whoAmI().getId();
+
+        response = changeIssueToResponseIssueVO(projectIssueService.addIssue(Integer.parseInt(projectId),
+                request.getName(), request.getStatus(), request.getContent(), myId, myId));
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @PutMapping("/modify/{projectId}")
     public ResponseEntity<ResponseIssueVO> modifyIssue(@PathVariable("projectId") String projectId,
                                                        @RequestBody RequestIssueVO request) throws Exception {

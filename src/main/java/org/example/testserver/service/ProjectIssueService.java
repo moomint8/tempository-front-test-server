@@ -21,7 +21,11 @@ public class ProjectIssueService {
         return projectIssueRepository.selectIssueByProjectId(projectId);
     }
 
+    public Issue addIssue(int projectId, String name, String status, String content, int managerId, int writerId) {
+        return projectIssueRepository.insertIssue(projectId, name, status, content, managerId, writerId);
+    }
+
     public Issue modifyIssue(int projectId, int no, String name, String status, String content, int managerId, int writerId) {
-        return projectIssueRepository.update(projectId, no, name, status, content, managerId, writerId);
+        return projectIssueRepository.updateIssue(projectId, no, name, status, content, managerId, writerId);
     }
 }
