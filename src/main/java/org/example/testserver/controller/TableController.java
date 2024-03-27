@@ -138,6 +138,27 @@ public class TableController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    @GetMapping("/create-ddl/{projectId}/{tableNo}")
+    public ResponseEntity<ResponseMessageVO> createDDL(@PathVariable("projectId") String projectId,
+                                                       @PathVariable("tableNo") String tableNo) {
+        ResponseMessageVO response = new ResponseMessageVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        try {
+            response.setMessage(tableService.createDDL(Integer.parseInt(projectId), Integer.parseInt(tableNo)));
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+
+        } catch (Exception e) {
+            response.setMessage("DDL 생성 실패");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+    }
+
     private ResponseTableDetailVO changeTableToResponseTableDetailVO(Table table) {
         ResponseTableDetailVO detailVO = new ResponseTableDetailVO();
         detailVO.setTableNo(table.getTableNo());

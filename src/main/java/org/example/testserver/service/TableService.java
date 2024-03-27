@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 @Service
 public class TableService {
@@ -17,7 +18,7 @@ public class TableService {
         this.tableRepository = tableRepository;
     }
 
-    public Map<Integer,String> findAllTableInfoByProjectId(int projectId) {
+    public Map<Integer, String> findAllTableInfoByProjectId(int projectId) {
         return tableRepository.selectAllTableInfoByProjectId(projectId);
     }
 
@@ -29,7 +30,7 @@ public class TableService {
                                 String foreignKey, boolean nullAble, String columnName, String defaultValue,
                                 String dataType, String note) {
         return tableRepository.insertTableDetail(projectId, tableNo, propertyName, primaryKey, foreignKey,
-                                                 nullAble, columnName, defaultValue, dataType, note);
+                nullAble, columnName, defaultValue, dataType, note);
     }
 
     public Table modifyTableDetail(int projectId, int tableNo, int propertyNo, String propertyName, boolean primaryKey,
@@ -41,5 +42,52 @@ public class TableService {
 
     public boolean removeTableDetail(int projectId, int tableNo, int propertyNo) {
         return tableRepository.deleteTableDetail(projectId, tableNo, propertyNo);
+    }
+
+    public String createDDL(int projectId, int tableNo) {
+        ArrayList<Table> tableStruct = findAllTableDetailByProjectIdAndTableNo(projectId, tableNo);
+
+        String tableName = tableStruct.get(0).getTableName();
+
+        String ddlHeader = "CREATE TABLE " + tableName + " ";
+        String ddlColumnBody = "";
+        String ddlForeignKeyBody = "";
+
+        for (Table table : tableStruct) {
+            if (table.getForeignKey() == null || table.getForeignKey().isEmpty()) {
+                String column = table.getColumnName() + " " + table.getDataType();
+
+                if (table.isPrimaryKey()) {
+                    column += " AUTO_INCREMENT PRIMARY KEY";
+                } else {
+                    if (!table.isNullAble()) {
+                        column += " NOT NULL";
+                    }
+                    if (table.getDefaultValue() != null && !table.getDefaultValue().isEmpty()) {
+                        column += " DEFAULT '" + table.getDefaultValue() + "'";
+                    }
+                }
+
+                ddlColumnBody += column + ", ";
+            } else {
+                StringTokenizer st = new StringTokenizer(table.getForeignKey(), ".");
+
+                String column = "FOREIGN KEY (" + table.getColumnName() + ") REFERENCES " + st.nextToken() + " (" +
+                        st.nextToken() + "), ";
+
+                ddlForeignKeyBody += column;
+            }
+        }
+
+        String totalDDL = ddlHeader + "( " + ddlColumnBody + ddlForeignKeyBody;
+
+        int lastIndex = totalDDL.lastIndexOf(", ");
+        if (lastIndex != -1) {
+            totalDDL = totalDDL.substring(0, lastIndex) + totalDDL.substring(lastIndex + 2);
+        }
+
+        totalDDL += " );";
+
+        return totalDDL;
     }
 }
