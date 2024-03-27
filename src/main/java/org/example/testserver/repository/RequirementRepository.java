@@ -80,5 +80,26 @@ public class RequirementRepository {
         throw new Exception();
     }
 
+    public boolean removeRequirement(int projectId, int no) {
+        boolean flag = false;
+        Requirement target = null;
 
+        for (Requirement requirement : requirementList) {
+            if (flag) {
+                requirement.setId(requirement.getId() - 1);
+            }
+            if (requirement.getProjectId() == projectId) {
+                if (flag) {
+                    requirement.setNo(requirement.getNo() - 1);
+                } else if (requirement.getNo() == no) {
+                    flag = true;
+                    target = requirement;
+                }
+            }
+        }
+
+        requirementList.remove(target);
+
+        return flag;
+    }
 }

@@ -26,5 +26,7 @@ public class RequirementService {
         return requirementRepository.updateRequirement(projectId, no, separate, name, content, note);
     }
 
-
+    public boolean removeRequirement(int projectId, int no) {
+        return requirementRepository.removeRequirement(projectId, no);
+    }
 }

@@ -1,6 +1,7 @@
 package org.example.testserver.controller;
 
 import org.example.testserver.aggregate.entity.Requirement;
+import org.example.testserver.aggregate.vo.ResponseMessageVO;
 import org.example.testserver.aggregate.vo.requirement.RequestRequirementVO;
 import org.example.testserver.aggregate.vo.requirement.ResponseRequirementListVO;
 import org.example.testserver.aggregate.vo.requirement.ResponseRequirementVO;
@@ -89,6 +90,25 @@ public class RequirementController {
             response.setMessage("수정 실패");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
+    }
+
+    @DeleteMapping("/remove/{projectId}")
+    public ResponseEntity<ResponseMessageVO> removeRequirement(@PathVariable("projectId") String projectId,
+                                                               @RequestBody RequestRequirementVO request) {
+        ResponseMessageVO response = new ResponseMessageVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        if (requirementService.removeRequirement(Integer.parseInt(projectId), request.getNo())) {
+            response.setMessage("삭제 성공");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+        response.setMessage("삭제 실패");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     private ResponseRequirementVO changeRequirementToResponseRequirementVO(Requirement requirement) {
