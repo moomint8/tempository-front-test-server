@@ -48,4 +48,16 @@ public class TableRepository {
 
         return tableInfo;
     }
+
+    public ArrayList<Table> selectAllTableDetailByProjectIdAndTableNo(int projectId, int tableNo) {
+        ArrayList<Table> tables = new ArrayList<>();
+
+        for (Table table : tableList) {
+            if (table.getProjectId() == projectId && table.getTableNo() == tableNo) {
+                tables.add(table);
+            }
+        }
+
+        return tables;
+    }
 }

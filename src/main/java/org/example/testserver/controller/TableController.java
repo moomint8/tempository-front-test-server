@@ -1,5 +1,8 @@
 package org.example.testserver.controller;
 
+import org.example.testserver.aggregate.entity.Table;
+import org.example.testserver.aggregate.vo.table.ResponseTableDetailListVO;
+import org.example.testserver.aggregate.vo.table.ResponseTableDetailVO;
 import org.example.testserver.aggregate.vo.table.ResponseTableInfoVO;
 import org.example.testserver.aggregate.vo.table.TableInfo;
 import org.example.testserver.service.SessionService;
@@ -47,5 +50,48 @@ public class TableController {
         response.setTableInfoList(tableInfoList);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("{projectId}/{tableNo}")
+    public ResponseEntity<ResponseTableDetailListVO> findTableDetailByProjectIdAndTableNo(
+            @PathVariable("projectId") String projectId, @PathVariable("tableNo") String tableNo) {
+
+        ResponseTableDetailListVO response = new ResponseTableDetailListVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        ArrayList<Table> tableList = tableService.findAllTableDetailByProjectIdAndTableNo(
+                Integer.parseInt(projectId), Integer.parseInt(tableNo));
+        ArrayList<ResponseTableDetailVO> tableDetailVOS = new ArrayList<>();
+
+        for (Table table : tableList) {
+            tableDetailVOS.add(changeTableToResponseTableDetailVO(table));
+        }
+
+        response.setMessage("조회 성공");
+        response.setTableDetailVOList(tableDetailVOS);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    private ResponseTableDetailVO changeTableToResponseTableDetailVO(Table table) {
+        ResponseTableDetailVO detailVO = new ResponseTableDetailVO();
+        detailVO.setTableNo(table.getTableNo());
+        detailVO.setTableName(table.getTableName());
+        detailVO.setPropertyNo(table.getPropertyNo());
+        detailVO.setPropertyName(table.getPropertyName());
+        detailVO.setPrimaryKey(table.isPrimaryKey());
+        detailVO.setForeignKey(table.getForeignKey());
+        detailVO.setNullAble(table.isNullAble());
+        detailVO.setColumnName(table.getColumnName());
+        detailVO.setDefaultValue(table.getDefaultValue());
+        detailVO.setDataType(table.getDataType());
+        detailVO.setNote(table.getNote());
+        detailVO.setProjectId(table.getProjectId());
+
+        return detailVO;
     }
 }

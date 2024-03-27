@@ -1,5 +1,6 @@
 package org.example.testserver.service;
 
+import org.example.testserver.aggregate.entity.Table;
 import org.example.testserver.repository.TableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,5 +19,9 @@ public class TableService {
 
     public Map<Integer,String> findAllTableInfoByProjectId(int projectId) {
         return tableRepository.selectAllTableInfoByProjectId(projectId);
+    }
+
+    public ArrayList<Table> findAllTableDetailByProjectIdAndTableNo(int projectId, int tableNo) {
+        return tableRepository.selectAllTableDetailByProjectIdAndTableNo(projectId, tableNo);
     }
 }
