@@ -1,18 +1,12 @@
 package org.example.testserver.controller;
 
 import org.example.testserver.aggregate.entity.Table;
-import org.example.testserver.aggregate.vo.table.ResponseTableDetailListVO;
-import org.example.testserver.aggregate.vo.table.ResponseTableDetailVO;
-import org.example.testserver.aggregate.vo.table.ResponseTableInfoVO;
-import org.example.testserver.aggregate.vo.table.TableInfo;
+import org.example.testserver.aggregate.vo.table.*;
 import org.example.testserver.service.SessionService;
 import org.example.testserver.service.TableService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -73,6 +67,26 @@ public class TableController {
 
         response.setMessage("조회 성공");
         response.setTableDetailVOList(tableDetailVOS);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/add/{projectId}/{tableNo}")
+    public ResponseEntity<ResponseTableDetailVO> addTableDetail(@PathVariable("projectId") String projectId,
+                                                                @PathVariable("tableNo") String tableNo,
+                                                                @RequestBody RequestTableDetailVO request) {
+        ResponseTableDetailVO response = new ResponseTableDetailVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        response = changeTableToResponseTableDetailVO(tableService.addTableDetail(Integer.parseInt(projectId),
+                Integer.parseInt(tableNo), request.getPropertyName(), request.isPrimaryKey(), request.getForeignKey(),
+                request.isNullAble(), request.getColumnName(), request.getDefaultValue(), request.getDataType(), request.getNote()));
+
+        response.setMessage("추가 성공");
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

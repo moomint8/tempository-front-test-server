@@ -60,4 +60,25 @@ public class TableRepository {
 
         return tables;
     }
+
+    public Table insertTableDetail(int projectId, int tableNo, String propertyName, boolean primaryKey,
+                                   String foreignKey, boolean nullAble, String columnName, String defaultValue,
+                                   String dataType, String note) {
+        String tableName = null;
+        int propertyNo = 1;
+
+        for (Table table : tableList) {
+            if (table.getProjectId() == projectId && table.getTableNo() == tableNo) {
+                tableName = table.getTableName();
+                propertyNo++;
+            }
+        }
+
+        Table newTable = new Table(tableNo, tableName, propertyNo, propertyName, primaryKey, foreignKey, nullAble,
+                columnName, defaultValue, dataType, note, projectId);
+
+        tableList.add(newTable);
+
+        return newTable;
+    }
 }

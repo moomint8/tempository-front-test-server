@@ -24,4 +24,11 @@ public class TableService {
     public ArrayList<Table> findAllTableDetailByProjectIdAndTableNo(int projectId, int tableNo) {
         return tableRepository.selectAllTableDetailByProjectIdAndTableNo(projectId, tableNo);
     }
+
+    public Table addTableDetail(int projectId, int tableNo, String propertyName, boolean primaryKey,
+                                String foreignKey, boolean nullAble, String columnName, String defaultValue,
+                                String dataType, String note) {
+        return tableRepository.insertTableDetail(projectId, tableNo, propertyName, primaryKey, foreignKey,
+                                                 nullAble, columnName, defaultValue, dataType, note);
+    }
 }
