@@ -81,4 +81,27 @@ public class TableRepository {
 
         return newTable;
     }
+
+    public Table updateTableDetail(int projectId, int tableNo, int propertyNo, String propertyName, boolean primaryKey,
+                                   String foreignKey, boolean nullAble, String columnName, String defaultValue,
+                                   String dataType, String note) throws Exception {
+
+
+        for (Table table : tableList) {
+            if (table.getProjectId() == projectId && table.getTableNo() == tableNo&&table.getPropertyNo() == propertyNo) {
+                table.setPropertyName(propertyName);
+                table.setPrimaryKey(primaryKey);
+                table.setForeignKey(foreignKey);
+                table.setNullAble(nullAble);
+                table.setColumnName(columnName);
+                table.setDefaultValue(defaultValue);
+                table.setDataType(dataType);
+                table.setNote(note);
+
+                return table;
+            }
+        }
+
+        throw new Exception();
+    }
 }

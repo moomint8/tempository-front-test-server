@@ -91,6 +91,32 @@ public class TableController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PutMapping("/modify/{projectId}/{tableNo}")
+    public ResponseEntity<ResponseTableDetailVO> modifyTableDetail(@PathVariable("projectId") String projectId,
+                                                                   @PathVariable("tableNo") String tableNo,
+                                                                   @RequestBody RequestTableDetailVO request) {
+        ResponseTableDetailVO response = new ResponseTableDetailVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        try {
+            response = changeTableToResponseTableDetailVO(tableService.modifyTableDetail(Integer.parseInt(projectId),
+                    Integer.parseInt(tableNo), request.getPropertyNo(), request.getPropertyName(), request.isPrimaryKey(), request.getForeignKey(),
+                    request.isNullAble(), request.getColumnName(), request.getDefaultValue(), request.getDataType(), request.getNote()));
+
+            response.setMessage("수정 성공");
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+
+        } catch (Exception e) {
+            response.setMessage("수정 실패");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
     private ResponseTableDetailVO changeTableToResponseTableDetailVO(Table table) {
         ResponseTableDetailVO detailVO = new ResponseTableDetailVO();
         detailVO.setTableNo(table.getTableNo());

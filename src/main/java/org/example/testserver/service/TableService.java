@@ -31,4 +31,11 @@ public class TableService {
         return tableRepository.insertTableDetail(projectId, tableNo, propertyName, primaryKey, foreignKey,
                                                  nullAble, columnName, defaultValue, dataType, note);
     }
+
+    public Table modifyTableDetail(int projectId, int tableNo, int propertyNo, String propertyName, boolean primaryKey,
+                                   String foreignKey, boolean nullAble, String columnName, String defaultValue,
+                                   String dataType, String note) throws Exception {
+        return tableRepository.updateTableDetail(projectId, tableNo, propertyNo, propertyName, primaryKey, foreignKey,
+                nullAble, columnName, defaultValue, dataType, note);
+    }
 }
