@@ -39,4 +39,46 @@ public class RequirementRepository {
 
         return requirements;
     }
+
+    public Requirement insertRequirement(int projectId, String separate, String name, String content, String note) {
+        int id = requirementList.size() + 1;
+        int no = 1;
+
+        for (Requirement requirement : requirementList) {
+            if (requirement.getProjectId() == projectId) {
+                no++;
+            }
+        }
+
+        Requirement requirement = new Requirement(id, no, separate, name, content, note, projectId);
+
+        requirementList.add(requirement);
+
+        return requirement;
+    }
+
+    public Requirement updateRequirement(int projectId, int no, String separate, String name, String content, String note) throws Exception {
+        for (Requirement requirement : requirementList) {
+            if (requirement.getProjectId() == projectId && requirement.getNo() == no) {
+                if (separate != null) {
+                    requirement.setSeparate(separate);
+                }
+                if (name != null) {
+                    requirement.setName(name);
+                }
+                if (content != null) {
+                    requirement.setContent(content);
+                }
+                if (note != null) {
+                    requirement.setNote(note);
+                }
+
+                return requirement;
+            }
+        }
+
+        throw new Exception();
+    }
+
+
 }

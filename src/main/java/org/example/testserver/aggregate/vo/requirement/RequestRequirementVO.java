@@ -7,13 +7,11 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class ResponseRequirementVO {
-    private String message;
+public class RequestRequirementVO {
     private int id;
     private int no;
     private String separate;
     private String name;
     private String content;
     private String note;
-    private int projectId;
 }
