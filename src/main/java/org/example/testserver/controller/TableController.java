@@ -1,6 +1,7 @@
 package org.example.testserver.controller;
 
 import org.example.testserver.aggregate.entity.Table;
+import org.example.testserver.aggregate.vo.ResponseMessageVO;
 import org.example.testserver.aggregate.vo.table.*;
 import org.example.testserver.service.SessionService;
 import org.example.testserver.service.TableService;
@@ -115,6 +116,26 @@ public class TableController {
             response.setMessage("수정 실패");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
+    }
+
+    @DeleteMapping("/remove/{projectId}/{tableNo}")
+    public ResponseEntity<ResponseMessageVO> removeTableDetail(@PathVariable("projectId") String projectId,
+                                                               @PathVariable("tableNo") String tableNo,
+                                                               @RequestBody RequestTableDetailVO request) {
+        ResponseMessageVO response = new ResponseMessageVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        if (tableService.removeTableDetail(Integer.parseInt(projectId), Integer.parseInt(tableNo), request.getPropertyNo())) {
+            response.setMessage("삭제 성공");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+        response.setMessage("삭제 실패");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     private ResponseTableDetailVO changeTableToResponseTableDetailVO(Table table) {

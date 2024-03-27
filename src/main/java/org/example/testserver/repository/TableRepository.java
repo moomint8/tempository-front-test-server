@@ -88,7 +88,7 @@ public class TableRepository {
 
 
         for (Table table : tableList) {
-            if (table.getProjectId() == projectId && table.getTableNo() == tableNo&&table.getPropertyNo() == propertyNo) {
+            if (table.getProjectId() == projectId && table.getTableNo() == tableNo && table.getPropertyNo() == propertyNo) {
                 table.setPropertyName(propertyName);
                 table.setPrimaryKey(primaryKey);
                 table.setForeignKey(foreignKey);
@@ -103,5 +103,26 @@ public class TableRepository {
         }
 
         throw new Exception();
+    }
+
+    public boolean deleteTableDetail(int projectId, int tableNo, int propertyNo) {
+
+        boolean flag = false;
+        Table target = null;
+
+        for (Table table : tableList) {
+            if (table.getProjectId() == projectId && table.getTableNo() == tableNo) {
+                if (flag) {
+                    table.setPropertyNo(table.getPropertyNo() - 1);
+                } else if (table.getPropertyNo() == propertyNo) {
+                    flag = true;
+                    target = table;
+                }
+            }
+        }
+
+        tableList.remove(target);
+
+        return flag;
     }
 }

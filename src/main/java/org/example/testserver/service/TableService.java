@@ -38,4 +38,8 @@ public class TableService {
         return tableRepository.updateTableDetail(projectId, tableNo, propertyNo, propertyName, primaryKey, foreignKey,
                 nullAble, columnName, defaultValue, dataType, note);
     }
+
+    public boolean removeTableDetail(int projectId, int tableNo, int propertyNo) {
+        return tableRepository.deleteTableDetail(projectId, tableNo, propertyNo);
+    }
 }
