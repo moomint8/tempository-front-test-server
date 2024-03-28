@@ -92,6 +92,39 @@ public class TableController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PostMapping("/save/{projectId}/{tableNo}")
+    public ResponseEntity<ResponseTableDetailListVO> saveTableDetail(@PathVariable("projectId") String projectId,
+                                                                     @PathVariable("tableNo") String tableNo,
+                                                                     @RequestBody RequestTableDetailListVO request) {
+        ResponseTableDetailListVO response = new ResponseTableDetailListVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        ArrayList<Table> tableList = tableService.findAllTableDetailByProjectIdAndTableNo(Integer.parseInt(projectId),
+                                                                                          Integer.parseInt(tableNo));
+        for (Table table : tableList) {
+            tableService.removeTableDetail(Integer.parseInt(projectId), Integer.parseInt(tableNo), table.getTableNo());
+        }
+
+        ArrayList<ResponseTableDetailVO> resVOList = new ArrayList<>();
+
+        for (RequestTableDetailVO reqVO : request.getTarget()) {
+            Table table = tableService.addTableDetail(Integer.parseInt(projectId), Integer.parseInt(tableNo),
+                    reqVO.getPropertyName(), reqVO.isPrimaryKey(), reqVO.getForeignKey(), reqVO.isNullAble(),
+                    reqVO.getColumnName(), reqVO.getDefaultValue(), reqVO.getDataType(), reqVO.getNote());
+
+            resVOList.add(changeTableToResponseTableDetailVO(table));
+        }
+
+        response.setMessage("저장 성공");
+        response.setTableDetailVOList(resVOList);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @PutMapping("/modify/{projectId}/{tableNo}")
     public ResponseEntity<ResponseTableDetailVO> modifyTableDetail(@PathVariable("projectId") String projectId,
                                                                    @PathVariable("tableNo") String tableNo,
