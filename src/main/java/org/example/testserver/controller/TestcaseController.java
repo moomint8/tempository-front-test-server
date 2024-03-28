@@ -3,6 +3,7 @@ package org.example.testserver.controller;
 import org.example.testserver.aggregate.entity.Testcase;
 import org.example.testserver.aggregate.vo.ResponseMessageVO;
 import org.example.testserver.aggregate.vo.projectTestcase.RequestProjectTestcaseVO;
+import org.example.testserver.aggregate.vo.projectTestcase.RequestTestcaseListVO;
 import org.example.testserver.aggregate.vo.projectTestcase.ResponseProjectTestcaseListVO;
 import org.example.testserver.aggregate.vo.projectTestcase.ResponseProjectTestcaseVO;
 import org.example.testserver.service.TestcaseService;
@@ -57,14 +58,37 @@ public class TestcaseController {
         }
 
         Testcase testcase = testcaseService.addProjectTestcase(Integer.parseInt(projectId), request.getSeparate(), request.getContent(), request.getExpectedValue(), request.getNote());
+
+        response = changeTestcaseToTestcaseVO(testcase);
         response.setMessage("추가 성공");
-        response.setNo(testcase.getNo());
-        response.setSeparate(testcase.getSeparate());
-        response.setContent(testcase.getContent());
-        response.setExpectedValue(testcase.getExpectedValue());
-        response.setResult(testcase.getResult());
-        response.setNote(testcase.getNote());
-        response.setProjectId(testcase.getProjectId());
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/save/{projectId}")
+    public ResponseEntity<ResponseProjectTestcaseListVO> saveProjectTestcaseList(@PathVariable("projectId") String projectId,
+                                                                                 @RequestBody RequestTestcaseListVO request) {
+        ResponseProjectTestcaseListVO response = new ResponseProjectTestcaseListVO();
+
+        if (sessionService.whoAmI() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        ArrayList<Testcase> testcases = testcaseService.findProjectTestcaseByProjectId(Integer.parseInt(projectId));
+        for (Testcase testcase : testcases) {
+            testcaseService.removeTestcase(Integer.parseInt(projectId), testcase.getNo());
+        }
+
+        ArrayList<RequestProjectTestcaseVO> reqTestcaseVOList = request.getTarget();
+        ArrayList<ResponseProjectTestcaseVO> resTestcaseVOArrayList = new ArrayList<>();
+
+        for (RequestProjectTestcaseVO reqVO : reqTestcaseVOList) {
+            Testcase testcase = testcaseService.addProjectTestcase(Integer.parseInt(projectId), reqVO.getSeparate(), reqVO.getContent(), reqVO.getExpectedValue(), reqVO.getNote());
+            resTestcaseVOArrayList.add(changeTestcaseToTestcaseVO(testcase));
+
+        }
+
+        response.setProjectTestcases(resTestcaseVOArrayList);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -81,14 +105,8 @@ public class TestcaseController {
         try {
             Testcase testcase = testcaseService.modifyProjectTestcase(Integer.parseInt(projectId), request.getNo(), request.getSeparate(), request.getContent(), request.getExpectedValue(), request.getResult(), request.getNote());
 
+            response = changeTestcaseToTestcaseVO(testcase);
             response.setMessage("변경 성공");
-            response.setNo(testcase.getNo());
-            response.setSeparate(testcase.getSeparate());
-            response.setContent(testcase.getContent());
-            response.setExpectedValue(testcase.getExpectedValue());
-            response.setResult(testcase.getResult());
-            response.setNote(testcase.getNote());
-            response.setProjectId(testcase.getProjectId());
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
 
@@ -114,5 +132,19 @@ public class TestcaseController {
 
         response.setMessage("삭제 실패");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    private ResponseProjectTestcaseVO changeTestcaseToTestcaseVO(Testcase testcase) {
+        ResponseProjectTestcaseVO response = new ResponseProjectTestcaseVO();
+
+        response.setNo(testcase.getNo());
+        response.setSeparate(testcase.getSeparate());
+        response.setContent(testcase.getContent());
+        response.setExpectedValue(testcase.getExpectedValue());
+        response.setResult(testcase.getResult());
+        response.setNote(testcase.getNote());
+        response.setProjectId(testcase.getProjectId());
+
+        return response;
     }
 }
