@@ -2,6 +2,7 @@ package org.example.testserver.controller;
 
 import org.example.testserver.aggregate.entity.WBS;
 import org.example.testserver.aggregate.vo.ResponseMessageVO;
+import org.example.testserver.aggregate.vo.WBS.RequestProjectWBSListVO;
 import org.example.testserver.aggregate.vo.WBS.RequestProjectWBSVO;
 import org.example.testserver.aggregate.vo.WBS.ResponseProjectWBSListVO;
 import org.example.testserver.aggregate.vo.WBS.ResponseProjectWBSVO;
@@ -68,6 +69,41 @@ public class WBSController {
                 request.getStatus(), request.getStartDate(), request.getEndDate(), request.getManagerId()));
 
         response.setMessage("추가 성공");
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/save/{projectId}")
+    public ResponseEntity<ResponseProjectWBSListVO> saveWBSList(@PathVariable("projectId") String projectId,
+                                                                @RequestBody RequestProjectWBSListVO request) {
+        ResponseProjectWBSListVO response = new ResponseProjectWBSListVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        ArrayList<WBS> wbsList = WBSService.findWBSListByProjectId(Integer.parseInt(projectId));
+
+        for (WBS wbs : wbsList) {
+            WBSService.removeWBS(Integer.parseInt(projectId), wbs.getNo());
+        }
+
+        ArrayList<ResponseProjectWBSVO> wbsVOList = new ArrayList<>();
+
+        for (RequestProjectWBSVO wbsVO : request.getTarget()) {
+            WBS wbs = WBSService.addWBS(Integer.parseInt(projectId), wbsVO.getContent(),
+                    wbsVO.getStatus(), wbsVO.getStartDate(), wbsVO.getEndDate(), wbsVO.getManagerId());
+            try {
+                wbsVOList.add(changeWBSToResponseWBSVO(wbs));
+            } catch (Exception e) {
+                response.setMessage("저장 실패");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        }
+
+        response.setMessage("저장 성공");
+        response.setResponseWBSVOList(wbsVOList);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
