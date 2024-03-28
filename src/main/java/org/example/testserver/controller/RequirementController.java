@@ -2,6 +2,7 @@ package org.example.testserver.controller;
 
 import org.example.testserver.aggregate.entity.Requirement;
 import org.example.testserver.aggregate.vo.ResponseMessageVO;
+import org.example.testserver.aggregate.vo.requirement.RequestRequirementListVO;
 import org.example.testserver.aggregate.vo.requirement.RequestRequirementVO;
 import org.example.testserver.aggregate.vo.requirement.ResponseRequirementListVO;
 import org.example.testserver.aggregate.vo.requirement.ResponseRequirementVO;
@@ -64,6 +65,39 @@ public class RequirementController {
                         request.getContent(), request.getNote()));
 
         response.setMessage("추가 성공");
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/save/{projectId}")
+    public ResponseEntity<ResponseRequirementListVO> saveRequirement(@PathVariable("projectId") String projectId,
+                                                                     @RequestBody RequestRequirementListVO request) {
+        ResponseRequirementListVO response = new ResponseRequirementListVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        ArrayList<Requirement> requirementList = requirementService.findRequirementByProjectId(Integer.parseInt(projectId));
+
+        // 해당 프로젝트 요구사항 전체 삭제
+        for (Requirement requirement : requirementList) {
+            requirementService.removeRequirement(Integer.parseInt(projectId), requirement.getNo());
+        }
+
+        ArrayList<RequestRequirementVO> reqVOList = request.getTarget();
+        ArrayList<ResponseRequirementVO> resVOList = new ArrayList<>();
+
+        // 새로운 요구명세서 전체 입력
+        for (RequestRequirementVO reqVO : reqVOList) {
+            Requirement requirement = requirementService.addRequirement(Integer.parseInt(projectId), reqVO.getSeparate(), reqVO.getName(),
+                    reqVO.getContent(), reqVO.getNote());
+            resVOList.add(changeRequirementToResponseRequirementVO(requirement));
+        }
+
+        response.setMessage("저장 성공");
+        response.setRequirementVOList(resVOList);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
