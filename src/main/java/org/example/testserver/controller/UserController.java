@@ -26,10 +26,16 @@ public class UserController {
     @PostMapping("/exist")
     public ResponseEntity<ResponseMessageVO> existNickname(@RequestBody RequestExistVO request) {
 
-        if (request.getNickname() != null && userService.existNickname(request.getNickname())) {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessageVO("OK"));
+        boolean flag = true;
+
+        if (request.getNickname() != null && !request.getNickname().isEmpty() && !userService.existNickname(request.getNickname())) {
+            flag = false;
         }
-        if (request.getEmail() != null && userService.existEmail(request.getEmail())) {
+        if (request.getEmail() != null && !userService.existEmail(request.getEmail())) {
+            flag = false;
+        }
+
+        if (flag) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessageVO("OK"));
         }
 

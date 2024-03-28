@@ -66,13 +66,13 @@ public class UserService {
     public User updateUserInfo(String nickname, String name) throws Exception {
         User user = sessionService.whoAmI();
 
-        if (nickname != null) {
+        if (nickname != null && !nickname.isEmpty()) {
             if (!userRepository.existNickname(nickname)) {
                 throw new Exception("중복된 닉네임입니다.");
             }
             user.setNickname(nickname);
         }
-        if (name != null) {
+        if (name != null && !name.isEmpty()) {
             user.setName(name);
         }
 
