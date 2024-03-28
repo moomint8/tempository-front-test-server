@@ -53,6 +53,34 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/{projectId}")
+    public ResponseEntity<ResponseProjectVO> findProjectInfoByProjectId(@PathVariable("projectId") String projectId) {
+        ResponseProjectVO response = new ResponseProjectVO();
+
+        if (sessionService.whoAmI() == null) {
+            response.setMessage("로그인 이후 이용해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        ArrayList<Project> projects = projectService.findMyProjects();
+
+        for (Project project : projects) {
+            if (project.getId() == Integer.parseInt(projectId)) {
+                try {
+                    response = projectVOMapper(project);
+                    response.setMessage("조회 성공");
+
+                    return ResponseEntity.status(HttpStatus.OK).body(response);
+                } catch (Exception e) {
+                    response.setMessage("조회 실패");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                }
+            }
+        }
+        response.setMessage("조회 실패");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<ResponseProjectVO> addProject(@RequestBody RequestProjectVO request) throws Exception {
         ResponseProjectVO response = new ResponseProjectVO();
