@@ -68,25 +68,25 @@ public class TableService {
                     }
                 }
 
-                ddlColumnBody += column + ", ";
+                ddlColumnBody += "  " + column + ", \n";
             } else {
                 StringTokenizer st = new StringTokenizer(table.getForeignKey(), ".");
 
                 String column = "FOREIGN KEY (" + table.getColumnName() + ") REFERENCES " + st.nextToken() + " (" +
-                        st.nextToken() + "), ";
+                        st.nextToken() + "), \n";
 
-                ddlForeignKeyBody += column;
+                ddlForeignKeyBody += "  " + column;
             }
         }
 
-        String totalDDL = ddlHeader + "( " + ddlColumnBody + ddlForeignKeyBody;
+        String totalDDL = ddlHeader + "\n( \n" + ddlColumnBody + ddlForeignKeyBody;
 
-        int lastIndex = totalDDL.lastIndexOf(", ");
+        int lastIndex = totalDDL.lastIndexOf(", \n");
         if (lastIndex != -1) {
             totalDDL = totalDDL.substring(0, lastIndex) + totalDDL.substring(lastIndex + 2);
         }
 
-        totalDDL += " );";
+        totalDDL += ");";
 
         return totalDDL;
     }
