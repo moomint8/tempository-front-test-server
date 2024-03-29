@@ -5,9 +5,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SessionService {
-    //    private static User session = null;
-    private static User session = new User(1, "홍길동", "RedLoad", "RedLoad@gmail.com", "1234", 0, 0);
-    public SessionService() {}
+    private static User session = null;
 
     public void signUp(User user) {
         session = user;
